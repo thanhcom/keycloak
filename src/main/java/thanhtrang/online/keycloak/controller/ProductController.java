@@ -12,7 +12,7 @@ public class ProductController {
     // Ví dụ: thêm sản phẩm, cập nhật sản phẩm, xoá sản phẩm, lấy danh sách sản phẩm, v.v.
 
      @GetMapping("/all")
-     @PreAuthorize("hasRole('USER')")
+     @PreAuthorize("hasRole('ADMIN')")
      public String getAllProducts() {
          // Logic để lấy danh sách sản phẩm
          return "Danh sách sản phẩm";

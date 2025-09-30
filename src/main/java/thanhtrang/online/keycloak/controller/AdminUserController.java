@@ -1,10 +1,11 @@
 package thanhtrang.online.keycloak.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import thanhtrang.online.keycloak.dto.LoginRequest;
+import thanhtrang.online.keycloak.dto.LoginResponse;
+import thanhtrang.online.keycloak.responseApi.ResponseApi;
 import thanhtrang.online.keycloak.service.UserClientService;
 
 @RestController
@@ -82,4 +83,17 @@ public class AdminUserController {
         }
         return "User ID: " + userId;
     }
+
+    @PostMapping("/user/login")
+    public ResponseEntity<?> loginUser(@RequestBody LoginRequest body) {
+        ResponseApi<LoginResponse> responseApi = new ResponseApi<>();
+        responseApi.setResponseCode(1005);
+        responseApi.setData( userClientService.login(body.getUsername(), body.getPassword()));
+        responseApi.setMessenger("Login successfully");
+        return ResponseEntity.ok(responseApi);
+    }
+
+
+
+
 }
