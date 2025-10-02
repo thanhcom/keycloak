@@ -1,5 +1,6 @@
 package thanhtrang.online.keycloak.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -85,7 +86,7 @@ public class AdminUserController {
     }
 
     @PostMapping("/user/login")
-    public ResponseEntity<?> loginUser(@RequestBody LoginRequest body) {
+    public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequest body) {
         ResponseApi<LoginResponse> responseApi = new ResponseApi<>();
         responseApi.setResponseCode(1005);
         responseApi.setData( userClientService.login(body.getUsername(), body.getPassword()));
