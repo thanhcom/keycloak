@@ -1,4 +1,4 @@
-package thanhtrang.online.keycloak.dto;
+package thanhtrang.online.keycloak.dto.response;
 
 import lombok.Builder;
 import lombok.Data;

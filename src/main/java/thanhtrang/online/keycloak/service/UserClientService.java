@@ -1,5 +1,10 @@
 package thanhtrang.online.keycloak.service;
 
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.Form;
+import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -9,7 +14,7 @@ import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Service;
-import thanhtrang.online.keycloak.dto.LoginResponse;
+import thanhtrang.online.keycloak.dto.response.LoginResponse;
 import thanhtrang.online.keycloak.enums.ErrCode;
 import thanhtrang.online.keycloak.exception.AppException;
 
@@ -138,4 +143,43 @@ public class UserClientService {
             throw  new AppException(ErrCode.UNAUTHORIZED);
         }
     }
+
+    public LoginResponse refreshToken(String refreshToken) {
+        try {
+            String tokenUrl = serverUrl + "/realms/" + realm + "/protocol/openid-connect/token";
+
+            Client client = ClientBuilder.newClient();
+
+            Form form = new Form()
+                    .param("grant_type", "refresh_token")
+                    .param("client_id", clientId)
+                    .param("refresh_token", refreshToken);
+
+            Response response = client.target(tokenUrl)
+                    .request()
+                    .post(Entity.form(form));
+
+            if (response.getStatus() != 200) {
+                throw new AppException(ErrCode.UNAUTHORIZED);
+            }
+
+            AccessTokenResponse tokenResponse = response.readEntity(AccessTokenResponse.class);
+
+            return LoginResponse.builder()
+                    .access_token(tokenResponse.getToken())
+                    .refresh_token(tokenResponse.getRefreshToken())
+                    .expires_in(tokenResponse.getExpiresIn())
+                    .refresh_expires_in(tokenResponse.getRefreshExpiresIn())
+                    .token_type(tokenResponse.getTokenType())
+                    .scope(tokenResponse.getScope())
+                    .success(true)
+                    .message("Token refreshed successfully")
+                    .build();
+
+        } catch (Exception e) {
+            throw new AppException(ErrCode.UNAUTHORIZED);
+        }
+    }
+
+
 }

@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -14,31 +15,21 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity // Bắt buộc để @PreAuthorize hoạt động
 public class SecurityConfig {
 
-    // -------------------- CHAIN CHO LOGIN PUBLIC --------------------
     @Bean
-    public SecurityFilterChain loginFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain publicFilterChain(HttpSecurity http) throws Exception {
+        String[] publicEndpoints = {
+                "/api/admin/user/login",
+                "/api/admin/user/refresh-token"
+        };
+
         http
-                .securityMatcher("/api/admin/user/login") // Chỉ áp dụng cho endpoint login
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll()) // Cho phép public
-                .csrf(csrf -> csrf.disable()); // Tắt CSRF cho login endpoint
+                .securityMatcher(publicEndpoints) // Áp dụng rule cho các endpoint này
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .csrf(AbstractHttpConfigurer::disable); // Tắt CSRF cho nhóm endpoint public
 
         return http.build();
     }
 
-    // -------------------- CHAIN CHO CÁC ENDPOINT KHÁC --------------------
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/public").permitAll() // Public endpoint
-                        .anyRequest().authenticated()           // Các endpoint khác cần JWT
-                )
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                );
-
-        return http.build();
-    }
 
     // -------------------- JWT DECODER --------------------
     @Bean

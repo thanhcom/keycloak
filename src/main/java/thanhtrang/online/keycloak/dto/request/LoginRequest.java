@@ -1,4 +1,4 @@
-package thanhtrang.online.keycloak.dto;
+package thanhtrang.online.keycloak.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

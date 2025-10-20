@@ -4,8 +4,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import thanhtrang.online.keycloak.dto.LoginRequest;
-import thanhtrang.online.keycloak.dto.LoginResponse;
+import thanhtrang.online.keycloak.dto.request.LoginRequest;
+import thanhtrang.online.keycloak.dto.request.TokenRequest;
+import thanhtrang.online.keycloak.dto.response.LoginResponse;
+import thanhtrang.online.keycloak.dto.response.TokenResponse;
 import thanhtrang.online.keycloak.responseApi.ResponseApi;
 import thanhtrang.online.keycloak.service.UserClientService;
 
@@ -90,6 +92,15 @@ public class AdminUserController {
         ResponseApi<LoginResponse> responseApi = new ResponseApi<>();
         responseApi.setResponseCode(1005);
         responseApi.setData( userClientService.login(body.getUsername(), body.getPassword()));
+        responseApi.setMessenger("Login successfully");
+        return ResponseEntity.ok(responseApi);
+    }
+
+    @PostMapping("/user/refresh-token")
+    public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRequest body) {
+        ResponseApi<LoginResponse> responseApi = new ResponseApi<>();
+        responseApi.setResponseCode(1005);
+        responseApi.setData( userClientService.refreshToken(body.getRefresh_token()));
         responseApi.setMessenger("Login successfully");
         return ResponseEntity.ok(responseApi);
     }

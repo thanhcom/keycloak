@@ -1,6 +1,5 @@
 package thanhtrang.online.keycloak.exception;
 
-import jakarta.validation.ConstraintViolation;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +12,7 @@ import thanhtrang.online.keycloak.enums.ErrCode;
 import thanhtrang.online.keycloak.responseApi.ResponseApi;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
